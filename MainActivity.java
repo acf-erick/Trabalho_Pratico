@@ -51,9 +51,10 @@ public class MainActivity extends AppCompatActivity {
     public RadioButton tela_peso_rd_masculino;
     public RadioButton tela_peso_rd_feminino;
     public EditText et_imc_5;
-    public EditText et_imc_6;
     public Button tela_peso_calcular;
     public Button tela_peso_voltar;
+
+    public Button txt_peso_altura;
 
     /////
     float altura;
@@ -119,11 +120,6 @@ public class MainActivity extends AppCompatActivity {
                 String alturaStr = et_imc1.getText().toString();
                 String pesoStr = et_imc2.getText().toString();
 
-                // Verificando se os campos estão vazios
-                if (alturaStr.isEmpty() || pesoStr.isEmpty()) {
-                    txt_imc.setText("Por favor, insira altura e peso.");
-                    return;
-                }
 
                 // Convertendo os valores de texto para números
                 float altura = Float.parseFloat(alturaStr);
@@ -131,6 +127,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // Calculando o IMC
                 float imc = peso / (altura * altura);
+
+                // Verificando se os campos estão vazios
+                if (alturaStr.isEmpty() || pesoStr.isEmpty()) {
+                    txt_imc.setText("Porfavor, insira altura e peso.");
+                    return;
+                }
 
                 // Capturando o sexo selecionado no RadioGroup
                 int sexoSelecionado = rg_imc.getCheckedRadioButtonId();
@@ -182,11 +184,79 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void CarregarCalculadoraAlturaIdeal () {
+    private void CarregarCalculadoraPesoIdeal() {
+        setContentView(R.layout.calculadora_peso_ideal);
+
+        // Mapeamento dos elementos da tela
+        txt_peso = findViewById(R.id.textView3);
+        tela_peso = findViewById(R.id.rd2);
+        tela_peso_rd_masculino = findViewById(R.id.radioButton3);
+        tela_peso_rd_feminino = findViewById(R.id.radioButton4);
+        tela_peso_calcular = findViewById(R.id.button5);
+        tela_peso_voltar = findViewById(R.id.button6);
+
+
+
+        // Ação de calcular o peso ideal
+        tela_peso_calcular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String alturaStr = et_altura.getText().toString().trim();
+
+                // Verificando se o campo de altura está vazio
+                if (alturaStr.isEmpty()) {
+                    txt_peso_resultado.setText("Por favor, insira a altura.");
+                    return;
+                }
+
+                try {
+                    // Convertendo a altura para float
+                    float altura = Float.parseFloat(alturaStr);
+
+                    // Verificando se a altura é válida
+                    if (altura <= 0) {
+                        txt_peso_resultado.setText("Por favor, insira uma altura válida.");
+                        return;
+                    }
+
+                    // Definindo o IMC ideal de acordo com o sexo selecionado
+                    float imcIdeal;
+                    int sexoSelecionado = rg_sexo.getCheckedRadioButtonId();
+
+                    if (sexoSelecionado == R.id.radioButtonMasculino) {
+                        imcIdeal = 21.7f;  // IMC ideal para homens
+                    } else if (sexoSelecionado == R.id.radioButtonFeminino) {
+                        imcIdeal = 22.7f;  // IMC ideal para mulheres
+                    } else {
+                        txt_peso_resultado.setText("Por favor, selecione o sexo.");
+                        return;
+                    }
+
+                    // Calculando o peso ideal usando a fórmula PESO_IDEAL = IMC_IDEAL * (ALTURA ^ 2)
+                    float pesoIdeal = imcIdeal * (altura * altura);
+
+                    // Exibindo o resultado
+                    txt_peso_resultado.setText(String.format("Peso ideal: %.2f kg", pesoIdeal));
+
+                } catch (NumberFormatException e) {
+                    txt_peso_resultado.setText("Por favor, insira um valor numérico válido.");
+                }
+            }
+        });
+
+        // Ação do botão voltar
+        btn_voltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carregarTelaPrincipal();  // Voltar à tela principal
+            }
+        });
+    }
+
 
     }
 
-    private void CarregarCalculadoraPesoIdeal() {
+    private void CarregarCalculadoraAlturaIdeal() {
 
     }
 
